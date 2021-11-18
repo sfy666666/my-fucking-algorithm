@@ -5,6 +5,9 @@ import jdk.nashorn.internal.ir.CallNode;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 最长不重复的字母长度
+ */
 public class LengthOfLongestSubstring {
     public static void main(String[] args) {
         System.out.println(solution("abcdeeeeabdddeadafdpouywjeqeazx"));
