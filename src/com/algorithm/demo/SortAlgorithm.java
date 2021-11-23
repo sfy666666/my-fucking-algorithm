@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 /**
  * 排序算法
- *
+ * <p>
  * 相关概念
- *
+ * <p>
  * 稳定：如果a原本在b前面，而a=b，排序之后a仍然在b的前面。
  * 不稳定：如果a原本在b的前面，而a=b，排序之后 a 可能会出现在 b 的后面。
  * 时间复杂度：对排序数据的总的操作次数。反映当n变化时，操作次数呈现什么规律。
@@ -25,6 +25,9 @@ public class SortAlgorithm {
 //        insertionSort(arrays);
         //希尔排序
 //        shellSort(arrays);
+        //归并排序
+//        mergeSort(arrays);
+        d(arrays);
     }
 
     /**
@@ -165,79 +168,103 @@ public class SortAlgorithm {
      * 归并排序是建立在归并操作上的一种有效的排序算法。该算法是采用分治法（Divide and Conquer）的
      * 一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，
      * 再使子序列段间有序。若将两个有序表合并成一个有序表，称为2-路归并。
-     *
+     * <p>
      * 5.1 算法描述
      * 把长度为n的输入序列分成两个长度为n/2的子序列；
      * 对这两个子序列分别采用归并排序；
      * 将两个排序好的子序列合并成一个最终的排序序列。
      * 5.2 动图演示 https://images2017.cnblogs.com/blog/849589/201710/849589-20171015230557043-37375010.gif
-     *
+     * <p>
      * 时间复杂度：平均 O(n㏒2n) 最坏 O(n㏒2n) 最好 O(n㏒2n)
      * 空间复杂度：O(n)
      * 稳定性：稳定
      */
-    public static void mergeSort(int[] arr,int left,int right,int[] temp) {
-        if(left<right){
-            int mid=(left+right)/2;
-            //左边归并排序
-            mergeSort(arr,left,mid,temp);
-            //右边归并排序
-            mergeSort(arr,mid+1,right,temp);
-            //合并左右两边的操作
-            merge(arr,left,mid,right,temp);
-        }
+    public static void mergeSort(int[] arr) {
+        //在排序前，先建好一个长度等于原数组长度的临时数组，避免递归中频繁开辟空间
+        int[] temp = new int[arr.length];
+        mergeSort(arr, 0, arr.length - 1, temp);
+        System.out.println(Arrays.toString(arr));
+    }
 
+    public static void mergeSort(int[] arr, int left, int right, int[] temp) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            //左边归并排序
+            mergeSort(arr, left, mid, temp);
+            //右边归并排序
+            mergeSort(arr, mid + 1, right, temp);
+            //合并左右两边的操作
+            merge(arr, left, mid, right, temp);
+        }
     }
 
     private static void merge(int[] arr, int left, int mid, int right, int[] temp) {
         //左序列指针
-        int i=left;
+        int i = left;
         //右序列指针
-        int j=mid+1;
+        int j = mid + 1;
         //临时数组指针
-        int t=0;
+        int t = 0;
+        while (i <= mid && j <= right) {
+            if (arr[i] <= arr[j]) {
+                temp[t++] = arr[i++];
+            } else {
+                temp[t++] = arr[j++];
+            }
+        }
+        //将左边剩余元素填充进temp中
+        while (i <= mid) {
+            temp[t++] = arr[i++];
+        }
+        //将右边剩余元素填充进temp中
+        while (j <= right) {
+            temp[t++] = arr[j++];
+        }
+        t = 0;
+        //将temp中的元素全部拷贝到原数组中
+        while (left <= right) {
+            arr[left++] = temp[t++];
+        }
     }
 
-    public static void a(int[] array1) {
-        int len = array1.length;
+    public static void a(int[] arr) {
+        int len = arr.length;
         for (int i = 0; i < len - 1; i++) {
             for (int j = 0; j < len - 1 - i; j++) {
-                if (array1[j] > array1[j + 1]) {
-                    int temp = array1[j];
-                    array1[j] = array1[j + 1];
-                    array1[j + 1] = temp;
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
                 }
             }
         }
-        System.out.println(Arrays.toString(array1));
+        System.out.println(Arrays.toString(arr));
     }
 
-    public static void b(int[] array1) {
+    public static void b(int[] arr) {
+        int len = arr.length;
         int temp, minIndex;
-        int len = array1.length;
         for (int i = 0; i < len - 1; i++) {
             minIndex = i;
-            for (int j = i + 1; j < len - 1; j++) {
-                if (array1[minIndex] > array1[j]) {
+            for (int j = i + 1; j < len; j++) {
+                if (arr[minIndex] > arr[j]) {
                     minIndex = j;
                 }
-
             }
-            temp = array1[i];
-            array1[i] = array1[minIndex];
-            array1[minIndex] = temp;
+            temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
         }
-        System.out.println(Arrays.toString(array1));
+        System.out.println(Arrays.toString(arr));
     }
 
     public static void c(int[] arr) {
-        int current, preIndex;
-        int len = arr.length;
-        for (int i = 0; i < len; i++) {
-            preIndex = i - 1;
+        int len = arr.length, current, preIndex;
+        for (int i = 1; i < len; i++) {
+            preIndex = i-1;
             current = arr[i];
-            while (preIndex >= 0 && arr[preIndex] > current) {
-                arr[preIndex + 1] = arr[preIndex];
+            while (preIndex >= 0 && current < arr[preIndex]) {
+                arr[preIndex+1 ] = arr[preIndex];
                 preIndex--;
             }
             arr[preIndex + 1] = current;
@@ -246,14 +273,13 @@ public class SortAlgorithm {
     }
 
     public static void d(int[] arr) {
-        int len = arr.length;
+        int len=arr.length;
         for (int gap = len/2; gap >0 ; gap/=2) {
             for (int i = gap; i < len; i++) {
-                int j=i;
-                int current=arr[i];
-                while(j-gap>=0&&arr[j-gap]>current){
+                int j=i,current=arr[i];
+                while (j-gap>=0&&current<arr[j-gap]){
                     arr[j]=arr[j-gap];
-                    j=j-gap;
+                    j-=gap;
                 }
                 arr[j]=current;
             }
